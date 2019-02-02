@@ -1,7 +1,5 @@
 var tableBody = $("#tableBody");
 
-
-
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyDjgQ0_dtaVDYEKHLwvyaryxXzOxZ8Gpu0",
@@ -15,7 +13,8 @@ var config = {
 
 var database = firebase.database();
 
-$("#addTrainButton").on("click", function () {
+$("#addTrainButton").on("click", function (e) {
+    e.preventDefault();
     var name = $("#trainName").val().trim();
     var destination = $("#destination").val().trim();
     var firstTrain = $("#firstTrainTime").val().trim();
@@ -33,14 +32,26 @@ database.ref().on("child_added",
     function (snapshot) {
         var dbObj = snapshot.val();
         var $tRow = $("<tr>")
+        var firstTrainTime = moment(dbObj.firstTrain, "HH:mm");
+        var trainStartDiff = Math.abs(moment().diff(firstTrainTime, "minutes"));
+        var newTime = trainStartDiff%dbObj.frequency;
+
+        var nextTrain = moment().add(newTime, "minutes").format("HH:mm");
+
+
         $tRow.append($(`<td>${dbObj.name}</td>`))
         $tRow.append($(`<td>${dbObj.destination}</td>`))
         $tRow.append($(`<td>${dbObj.frequency}</td>`))
-        $tRow.append($(`<td>${dbObj.arrivalTime}</td>`))
-        $tRow.append($(`<td>${dbObj.minAway}</td>`))
+        $tRow.append($(`<td>${nextTrain}</td>`))
+        $tRow.append($(`<td>${newTime}</td>`))
+        $tRow.append($("<button class='deleteButton'>X</button>"))
         tableBody.append($tRow);
     },
     function (error) {
         console.log(error);
     }
 )
+$(".deleteButton").on("click", function() {
+    database.ref().remove();
+    console.log("yay")
+})
