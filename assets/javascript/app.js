@@ -36,22 +36,22 @@ database.ref().on("child_added",
         var trainStartDiff = Math.abs(moment().diff(firstTrainTime, "minutes"));
         var newTime = trainStartDiff%dbObj.frequency;
 
-        var nextTrain = moment().add(newTime, "minutes").format("HH:mm");
 
+        var nextTrain = moment().add(newTime, "minutes").format("HH:mm");
 
         $tRow.append($(`<td>${dbObj.name}</td>`))
         $tRow.append($(`<td>${dbObj.destination}</td>`))
         $tRow.append($(`<td>${dbObj.frequency}</td>`))
         $tRow.append($(`<td>${nextTrain}</td>`))
         $tRow.append($(`<td>${newTime}</td>`))
-        $tRow.append($("<button class='deleteButton'>X</button>"))
         tableBody.append($tRow);
     },
     function (error) {
         console.log(error);
     }
 )
-$(".deleteButton").on("click", function() {
+
+$(document).on("click", ".deleteButton", function(){
     database.ref().remove();
     console.log("yay")
 })
