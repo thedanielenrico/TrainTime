@@ -34,7 +34,8 @@ database.ref().on("child_added",
         var $tRow = $("<tr>")
         var firstTrainTime = moment(dbObj.firstTrain, "HH:mm");
         var trainStartDiff = Math.abs(moment().diff(firstTrainTime, "minutes"));
-        var newTime = trainStartDiff%dbObj.frequency;
+        var newTime = Number(trainStartDiff)%Number(dbObj.frequency);
+        console.log(Number(dbObj.frequency));
 
 
         var nextTrain = moment().add(newTime, "minutes").format("HH:mm");
